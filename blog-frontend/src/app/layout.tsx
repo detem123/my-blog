@@ -4,6 +4,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Navbar from '@/components/Navbar';
 import BackToTop from '@/components/BackToTop';
+import Footer from '@/components/Footer';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
@@ -19,10 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             <Navbar />
             <main className="flex-1">{children}</main>
-            <footer className="text-center text-slate-400 dark:text-slate-600 text-sm py-10 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors">
-              <p className="text-lg mb-1">✍️</p>
-              <p>© {new Date().getFullYear()} InkSpace · Built with Next.js & Spring Boot</p>
-            </footer>
+            <Footer />
             <BackToTop />
           </AuthProvider>
         </ThemeProvider>

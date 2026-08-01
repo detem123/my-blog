@@ -19,6 +19,12 @@
 body {
   @apply bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  /* 微妙的点阵背景 */
+  background-image: radial-gradient(circle, #cbd5e1 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+}
+.dark body {
+  background-image: radial-gradient(circle, #334155 0.5px, transparent 0.5px);
 }
 
 /* 渐变文字 */

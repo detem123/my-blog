@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { articleAPI, categoryAPI, tagAPI } from '@/lib/api';
 import { SkeletonGrid } from '@/components/SkeletonCard';
+import HeroQuote from '@/components/HeroQuote';
 import { HiSearch, HiTag, HiCalendar, HiUser } from 'react-icons/hi';
 
 interface Article {
@@ -71,9 +72,10 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
               用文字，<span className="underline decoration-pink-300 decoration-4 underline-offset-8">书写</span>无限可能
             </h1>
-            <p className="text-lg md:text-xl text-indigo-100 dark:text-indigo-200 mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl text-indigo-100 dark:text-indigo-200 mb-6 leading-relaxed">
               分享技术洞察、记录生活点滴。InkSpace 是你思想的栖息地。
             </p>
+            <HeroQuote />
           </motion.div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
