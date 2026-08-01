@@ -8,12 +8,7 @@ import toast from 'react-hot-toast';
 import { HiPlus, HiPencil, HiTrash, HiEye } from 'react-icons/hi';
 
 interface Article {
-  id: number;
-  title: string;
-  slug: string;
-  status: string;
-  categoryName: string;
-  createdAt: string;
+  id: number; title: string; slug: string; status: string; categoryName: string; createdAt: string;
 }
 
 export default function ArticlesPage() {
@@ -44,9 +39,8 @@ export default function ArticlesPage() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">文章管理</h1>
-        <Link href="/admin/write"
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">文章管理</h1>
+        <Link href="/admin/write" className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-200 dark:shadow-indigo-900">
           <HiPlus className="text-lg" /> 写新文章
         </Link>
       </div>
@@ -56,17 +50,17 @@ export default function ArticlesPage() {
           <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : articles.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
+        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
           <p className="text-4xl mb-3">📝</p>
-          <p className="text-slate-400 mb-4">还没有文章</p>
-          <Link href="/admin/write" className="text-indigo-600 font-medium hover:underline">去写第一篇 →</Link>
+          <p className="text-slate-400 dark:text-slate-500 mb-4">还没有文章</p>
+          <Link href="/admin/write" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">去写第一篇 →</Link>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-50 bg-slate-50/50 text-left text-sm text-slate-500">
+                <tr className="border-b border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-left text-sm text-slate-500 dark:text-slate-400">
                   <th className="px-6 py-4 font-medium">标题</th>
                   <th className="px-6 py-4 font-medium w-24">状态</th>
                   <th className="px-6 py-4 font-medium w-28">分类</th>
@@ -76,33 +70,23 @@ export default function ArticlesPage() {
               </thead>
               <tbody className="text-sm">
                 {articles.map(article => (
-                  <tr key={article.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-slate-700 line-clamp-1">{article.title}</span>
-                    </td>
+                  <tr key={article.id} className="border-b border-slate-50 dark:border-slate-800 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4"><span className="font-medium text-slate-700 dark:text-slate-300 line-clamp-1">{article.title}</span></td>
                     <td className="px-6 py-4">
                       <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
-                        article.status === 'PUBLISHED' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                        article.status === 'PUBLISHED' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400'
                       }`}>
                         {article.status === 'PUBLISHED' ? '已发布' : '草稿'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{article.categoryName || '-'}</td>
-                    <td className="px-6 py-4 text-slate-400 text-xs">{new Date(article.createdAt).toLocaleDateString('zh-CN')}</td>
+                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{article.categoryName || '-'}</td>
+                    <td className="px-6 py-4 text-slate-400 dark:text-slate-500 text-xs">{new Date(article.createdAt).toLocaleDateString('zh-CN')}</td>
                     <td className="px-6 py-4">
                       <div className="flex gap-1">
-                        <Link href={`/article/${article.slug}`}
-                          className="p-2 text-slate-400 hover:text-indigo-600 transition-colors" title="查看">
-                          <HiEye />
-                        </Link>
-                        <Link href={`/admin/write?id=${article.id}`}
-                          className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="编辑">
-                          <HiPencil />
-                        </Link>
-                        <button onClick={() => handleDelete(article.id)}
-                          className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="删除">
-                          <HiTrash />
-                        </button>
+                        <Link href={`/article/${article.slug}`} className="p-2 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title="查看"><HiEye /></Link>
+                        <Link href={`/admin/write?id=${article.id}`} className="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="编辑"><HiPencil /></Link>
+                        <button onClick={() => handleDelete(article.id)} className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors" title="删除"><HiTrash /></button>
                       </div>
                     </td>
                   </tr>
@@ -116,10 +100,10 @@ export default function ArticlesPage() {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-8">
           <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            className="px-4 py-2 border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-50 text-sm text-slate-600 transition">← 上一页</button>
-          <span className="text-sm text-slate-400">{page + 1} / {totalPages}</span>
+            className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-600 dark:text-slate-400 transition">← 上一页</button>
+          <span className="text-sm text-slate-400 dark:text-slate-500">{page + 1} / {totalPages}</span>
           <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}
-            className="px-4 py-2 border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-50 text-sm text-slate-600 transition">下一页 →</button>
+            className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-600 dark:text-slate-400 transition">下一页 →</button>
         </div>
       )}
     </motion.div>
