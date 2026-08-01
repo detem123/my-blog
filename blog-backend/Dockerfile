@@ -4,13 +4,17 @@ COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
 RUN chmod +x mvnw
-# 强制更新依赖并下载 PostgreSQL 驱动
-RUN ./mvnw dependency:resolve -U
 RUN ./mvnw dependency:go-offline -U
 COPY src src
 RUN ./mvnw clean package -DskipTests -U
-# 如果驱动还是没有，手动添加
-RUN ls -la \ || echo "No PostgreSQL jar found in local cache"
+# 检查 postgresql jar 是否在最终 jar 中，若没有则手动下载并注入
+RUN jar tf target/*.jar | grep postgresql || \
+    (echo "PostgreSQL driver missing, manually adding..." && \
+     mkdir -p target/BOOT-INF/lib && \
+     cd target/BOOT-INF/lib && \
+     wget https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.3/postgresql-42.7.3.jar && \
+     cd /app/target && \
+     jar uf blog-backend-0.0.1-SNAPSHOT.jar BOOT-INF/lib/postgresql-42.7.3.jar)
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app

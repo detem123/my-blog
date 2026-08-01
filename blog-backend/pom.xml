@@ -81,6 +81,8 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+    
+        <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> <scope>compile</scope> </dependency>
     </dependencies>
 
     <build>
@@ -100,4 +102,5 @@
         </plugins>
     </build>
 </project>
+
 
