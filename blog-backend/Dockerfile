@@ -3,9 +3,14 @@ WORKDIR /app
 COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -U
+RUN chmod +x mvnw
+# 强制更新依赖并下载 PostgreSQL 驱动
+RUN ./mvnw dependency:resolve -U
+RUN ./mvnw dependency:go-offline -U
 COPY src src
 RUN ./mvnw clean package -DskipTests -U
+# 如果驱动还是没有，手动添加
+RUN ls -la \ || echo "No PostgreSQL jar found in local cache"
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
