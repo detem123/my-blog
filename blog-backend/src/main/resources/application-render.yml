@@ -1,20 +1,15 @@
-# Render 环境变量配置
-# 本地开发时使用默认值，Render 部署时自动从环境变量读取
-
+# Render 部署配置 — 使用 Render 自动注入的环境变量
 spring:
   config:
     activate:
       on-profile: render
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:blogdb}
-    driver-class-name: org.postgresql.Driver
-    username: ${DB_USER:postgres}
-    password: ${DB_PASS:postgres}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: false
 
 server:
   port: ${PORT:8080}
