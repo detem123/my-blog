@@ -1,19 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { articleAPI, categoryAPI } from '@/lib/api';
+import { useTheme } from '@/context/ThemeContext';
 import toast from 'react-hot-toast';
 import { HiSave, HiPaperAirplane, HiX } from 'react-icons/hi';
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
-export default function WritePage() {
+// ========== 内层组件 — 使用 useSearchParams ==========
+function WriteForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('id');
+  const { theme } = useTheme();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -41,13 +44,30 @@ export default function WritePage() {
     setTagInput('');
   };
 
+  /** 去除 markdown 语法，提取纯文本摘要 */
+  const stripMarkdown = (md: string) => {
+    return md
+      .replace(/^#{1,6}\s+/gm, '')
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      .replace(/\*(.+?)\*/g, '$1')
+      .replace(/`{1,3}[^`]*`{1,3}/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
+      .replace(/^>\s+/gm, '')
+      .replace(/^[-*+]\s+/gm, '')
+      .replace(/^\d+\.\s+/gm, '')
+      .replace(/\n+/g, ' ')
+      .replace(/<[^>]+>/g, '')
+      .trim();
+  };
+
   const handleSave = async (publish: boolean) => {
     if (!title.trim() || !content.trim()) { toast.error('标题和内容不能为空'); return; }
     setSaving(true);
     try {
       const data = {
         title: title.trim(), content,
-        summary: summary.trim() || content.substring(0, 200),
+        summary: summary.trim() || stripMarkdown(content).substring(0, 200),
         categoryName: categoryName || null,
         tags: tags.length > 0 ? tags : null,
         status: publish ? 'PUBLISHED' : 'DRAFT',
@@ -55,7 +75,17 @@ export default function WritePage() {
       if (editId) { await articleAPI.update(Number(editId), data); toast.success('更新成功'); }
       else { await articleAPI.create(data); toast.success(publish ? '发布成功！' : '草稿已保存'); }
       router.push('/admin/articles');
-    } catch (err: any) { toast.error(err.response?.data?.message || '保存失败'); }
+    } catch (err: any) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        toast.error('请求超时，请确认后端已启动 (localhost:8080)');
+      } else if (!err.response) {
+        toast.error('无法连接后端，请先运行 D:\\blog\\start.bat 启动后端');
+      } else {
+        toast.error('保存失败');
+      }
+    }
     finally { setSaving(false); }
   };
 
@@ -68,7 +98,7 @@ export default function WritePage() {
           className="w-full text-2xl font-bold px-0 py-2 border-0 border-b-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:outline-none placeholder:text-slate-300 dark:placeholder:text-slate-700 transition-colors bg-transparent text-slate-800 dark:text-slate-100" />
 
         <input type="text" value={summary} onChange={e => setSummary(e.target.value)}
-          placeholder="文章摘要（选填）"
+          placeholder="文章摘要（选填，留空则自动从正文提取）"
           className="w-full px-0 py-2 border-0 border-b border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:outline-none placeholder:text-slate-300 dark:placeholder:text-slate-700 text-sm transition-colors bg-transparent text-slate-600 dark:text-slate-400" />
 
         <div className="flex gap-3 items-center flex-wrap">
@@ -91,7 +121,7 @@ export default function WritePage() {
           </div>
         </div>
 
-        <div data-color-mode="light">
+        <div data-color-mode={theme === 'dark' ? 'dark' : 'light'}>
           <MDEditor value={content} onChange={val => setContent(val || '')} height={520} preview="live" />
         </div>
 
@@ -107,5 +137,18 @@ export default function WritePage() {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+// ========== 外层组件 — 提供 Suspense 边界 ==========
+export default function WritePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center py-32">
+        <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <WriteForm />
+    </Suspense>
   );
 }

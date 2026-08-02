@@ -24,6 +24,9 @@ public class CommentController {
     public ApiResponse<?> addComment(@PathVariable Long articleId,
                                       @RequestBody Map<String, Object> body,
                                       Authentication auth) {
+        if (auth == null) {
+            return ApiResponse.error(401, "请先登录后再评论");
+        }
         String content = (String) body.get("content");
         Long parentId = body.get("parentId") != null
                 ? ((Number) body.get("parentId")).longValue()

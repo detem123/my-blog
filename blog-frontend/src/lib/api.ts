@@ -20,12 +20,24 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+    if (err.response) {
+      const { status, data } = err.response;
+      if (status === 401) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // 避免在登录页重复跳转
+          if (!window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login';
+          }
+        }
+      } else if (status === 403) {
+        console.error('权限不足，请检查是否登录');
       }
+    } else if (err.code === 'ECONNABORTED') {
+      console.error('请求超时，后端可能未启动');
+    } else if (!err.response) {
+      console.error('网络错误，无法连接到后端服务器');
     }
     return Promise.reject(err);
   }

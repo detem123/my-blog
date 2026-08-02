@@ -52,6 +52,7 @@ public class CommentService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getComments(Long articleId) {
         List<Comment> comments = commentRepository.findByArticleIdOrderByCreatedAtDesc(articleId);
         return comments.stream().map(c -> {

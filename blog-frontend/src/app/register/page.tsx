@@ -22,7 +22,17 @@ export default function RegisterPage() {
     if (password.length < 6) { toast.error('密码至少6位'); return; }
     setLoading(true);
     try { await register(username, password, email); toast.success('注册成功！'); router.push('/admin'); }
-    catch (err: any) { toast.error(err.response?.data?.message || '注册失败'); }
+    catch (err: any) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        toast.error('连接超时，请确认后端已启动');
+      } else if (!err.response) {
+        toast.error('无法连接后端，请先运行 D:\\blog\\start.bat 启动后端');
+      } else {
+        toast.error('注册失败');
+      }
+    }
     finally { setLoading(false); }
   };
 

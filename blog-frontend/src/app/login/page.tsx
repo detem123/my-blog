@@ -19,7 +19,17 @@ export default function LoginPage() {
     if (!username || !password) { toast.error('请填写用户名和密码'); return; }
     setLoading(true);
     try { await login(username, password); toast.success('欢迎回来！'); router.push('/admin'); }
-    catch (err: any) { toast.error(err.response?.data?.message || '登录失败'); }
+    catch (err: any) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        toast.error('连接超时，请确认后端已启动 (localhost:8080)');
+      } else if (!err.response) {
+        toast.error('无法连接后端，请先运行 start.bat 启动后端服务');
+      } else {
+        toast.error('登录失败');
+      }
+    }
     finally { setLoading(false); }
   };
 

@@ -29,6 +29,7 @@ public class ArticleService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public Page<ArticleDTO> getArticles(int page, int size, String keyword,
                                          Long categoryId, Long tagId) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -47,12 +48,14 @@ public class ArticleService {
         return articles.map(this::toDTO);
     }
 
+    @Transactional(readOnly = true)
     public ArticleDTO getArticleBySlug(String slug) {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("文章不存在"));
         return toDTO(article);
     }
 
+    @Transactional(readOnly = true)
     public ArticleDTO getArticleById(Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("文章不存在"));
@@ -143,6 +146,7 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
+    @Transactional(readOnly = true)
     public Page<ArticleDTO> getMyArticles(int page, int size, String username) {
         User author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));

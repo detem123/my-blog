@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: h2
+    active: postgres
   jpa:
     open-in-view: false
 
@@ -48,5 +48,18 @@ spring:
       ddl-auto: update
     show-sql: false
 
-
-
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blogdb
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false

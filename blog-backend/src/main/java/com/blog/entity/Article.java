@@ -26,7 +26,7 @@ public class Article {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(length = 512)
